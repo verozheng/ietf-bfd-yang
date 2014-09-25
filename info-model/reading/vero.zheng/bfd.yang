@@ -1,0 +1,768 @@
+module bfd {
+	namespace "urn:ietf:params:xml:ns:yang:bfd";
+	//namespace need to be assigned by IANA
+	prefix "bfd";
+
+	import ietf-inet-types {
+	prefix inet;
+	}
+
+	organization "IETF BFD (Bidirectional Forwarding Detection) Working Group";
+	contact "vero.zheng@huawei.com
+		aldrin.ietf@gmail.com
+		zuni.wang@huawei.com";
+
+	description "BFD Yang Module";
+	revision "2014-08-21" {
+	    description "Initial version";
+	}
+
+	typedef ifName {
+		description "Interface name";
+		type string;
+	}
+	typedef vrfName {
+		description "VRF Name";
+		type string;
+	}	
+
+	/* BFD Global Configuration */
+	
+	container bfdSchGlobal {
+		description "BFD Global Configuration";
+
+		leaf bfdEnable {
+			description "BFD Enable";
+			config "true";
+			mandatory "true";
+			type boolean;
+		}
+	}
+
+	/* BFD for MPLS */
+
+	grouping mplsTeTunnelBfd {
+
+		leaf mplsTeTunnelBfdEnable {
+			description "MPLS TE Tunnel Bfd Enable";
+			config "true";
+			type boolean;
+		}
+		leaf mplsTeTunnelBfdMinTx {
+			description "Specify the minimum transmit interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf mplsTeTunnelBfdMinnRx {
+			description "Specify the minimum receive interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf mplsTeTunnelBfdDetectMultiplier {
+			description "Specify the detect multiplier";
+			config "true";
+			default "3";
+			type uint32 {
+				range "3..50";
+			}
+		}
+		leaf mplsTeTunnelBfdBlock {
+			description "Block MPLS TE Tunnel Bfd";
+			config "true";
+			default "false";
+			type boolean;
+		}
+	}
+
+	container bfdForMpls {
+
+		container mplsTeTunnelBfd {
+			uses mplsTeTunnelBfd;
+		}
+	}
+
+	/* BFD for BGP */	
+
+	grouping peerBfd {
+
+		description "BGP Peer BFD configure";
+		leaf isBfdBlock {
+			description "Clear BFD configuration";
+			config "true";
+			default "false";
+			type boolean;
+		}
+		leaf multiplier {
+			description "Specify the detect multiplier";
+			config "true";
+			default "3";
+			type uint32 {
+				range "3..50";
+			}
+		}
+		leaf isBfdEnable {
+			description "Enable BFD";
+			config "true";
+			default "false";
+			type boolean;
+		}
+		leaf rxInterval {
+			description "Specify the minimum receive interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf txInterval {
+			description "Specify the minimum transmit interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf isSingleHop {
+			description "Prefer to create a single hop BFD session for IBGP peer";
+			config "true";
+			default "false";
+			type boolean;
+		}
+	}
+
+	container bfdForBgp {
+
+		container peerBfd {
+			uses peerBfd;
+		}
+	}
+
+	/* BFD for OSPF */
+
+	grouping interfaceBfd {
+
+		leaf bfdblock {
+			description "block enable BFD";
+			config "true";
+			type boolean;
+		}
+		leaf bfdEnable {
+			description "BFD Enable";
+			config "true";
+			type boolean;
+		}
+		leaf bfdDetectMultiplierValue {
+			description "Specify the detect multiplier";
+			config "true";
+			type uint32 {
+				range "3..50";
+			}
+		}
+		leaf bfdMinTxInterval {
+			description "Specify the minimum transmit interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf bfdMinRxInterval {
+			description "Specify the minimum receive interval";
+			config "true";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+
+	}	
+
+	container bfdForOspf {
+
+		container interfaceBfd {
+			uses interfaceBfd;
+		}
+	}	
+
+	/* BFD for ISIS */
+
+	grouping isCircMtBfd {
+		
+		description "interface bfd";
+
+		leaf bfdEnable {
+			description "BFD enable type";
+			config "true";
+			default "false";
+			type boolean;
+		}
+		leaf bfdStaticEn {
+			description "Enable BFD on specific interface";
+			config "true";
+			default "false";
+			type boolean;
+		}
+		leaf bfdBlockEn {
+			description "Block BFD on specific interface";
+			config "true";
+			default "false";
+			type boolean;
+		}
+		leaf bfdMinRx {
+			description "Specify the minimum receive interval";
+			config "true";
+			default "10";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf bfdMinTx {
+			description "Specify the minimum transmit interval";
+			config "true";
+			default "10";
+			type uint32 {
+				range "1..4294967295";
+			}
+		}
+		leaf bfdMultiplierNumber {
+			description "Specify the detect multiplier";
+			config "true";
+			default "3";
+			type uint32 {
+				range "3..50";
+			}
+		}
+	}
+
+	container bfdForIsis {
+
+		container isCircMtBfd {
+			uses interfaceBfd;
+		}
+	}
+	
+	/* BFD Session Statistics */	
+
+	list bfdStat {
+		config "false";
+		description "BFD Session Number";
+
+		leaf ipSessNum {
+			description "IP Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf ldpLspSessNum {
+			description "LDP LSP Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf sLspSessNum {
+			description "Static LSP Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf teLspSessNum {
+			description "TE LSP Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf totalSessNum {
+			description "Total Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf SessUpNum {
+			description "Session Up Number";
+			config "false";
+			type uint32;
+		}
+		leaf SessDownNum {
+			description "Session Down Number";
+			config "false";
+			type uint32;
+		}
+		leaf staticSessNum {
+			description "Total Static Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf dynSessNum {
+			description "Total Dynamic Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf teTunnelSessNum {
+			description "TE TUNNEL Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf usedDiscrNum {
+			description "Used Session Discriminator Number";
+			config "false";
+			type uint32;
+		}
+		leaf pwSessNum {
+			description "PW Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf vsiPwSessNum {
+			description "VSI PW Session Number";
+			config "false";
+			type uint32;
+		}
+	}
+	
+	/* BFD Session Configuration Information*/
+
+	container bfdAllSessions {
+
+		config "false";
+		list bfdAllSession {
+
+			config "false";
+			description "BFD Session Configuration Information";
+
+			leaf sessName {
+				description "Session Name";
+				config "false";
+				type string;
+			}
+			leaf createType {
+				description "Session Create Type";
+				config "false";
+				type enumeration {
+					enum SESS_STATIC {
+						value "0";
+						description "SESS_STATIC:";
+					}
+					enum SESS_AUTO {
+						value "1";
+						description "SESS_AUTO:";
+					}
+					enum SESS_DYNAMIC {
+						value "2";
+						description "SESS_DYNAMIC:";
+					}
+					enum PASSIVE {
+						value "3";
+						description "PASSIVE:";
+					}
+				}
+			}
+			leaf sessType {
+				description "Session Type";
+				config "false";
+				type enumeration {
+					enum SINGLE_HOP_IP {
+						value "0";
+						description "SINGLE_HOP_IP:";
+					}
+					enum MULTI_HOP_IP {
+						value "1";
+						description "MULTI_HOP_IP:";
+					}
+					enum STATIC_LSP {
+						value "2";
+						description "STATIC_LSP:";
+					}
+					enum LDP_LSP {
+						value "3";
+						description "LDP_LSP:";
+					}
+					enum TE_LSP {
+						value "4";
+						description "TE_LSP:";
+					}
+					enum TUNNEL {
+						value "5";
+						description "TUNNEL:";
+					}
+					enum VLL_PW {
+						value "6";
+						description "VLL_PW:";
+					}
+					enum VSI_PW {
+						value "7";
+						description "VSI_PW:";
+					}
+				}
+			}
+			leaf localDiscr {
+				description "Local Discriminator";
+				config "false";
+				type uint32 {
+					range "1..32768";
+				}
+			}
+			leaf remoteDiscr {
+				description "Remote Discriminator";
+				config "false";
+				type uint32;
+			}
+			leaf linkType {
+				description "Binding Link Type";
+				config "false";
+				type enumeration {
+					enum IP {
+						value "0";
+						description "IP:";
+					}
+					enum LDP_LSP {
+						value "1";
+						description "LDP_LSP:";
+					}
+					enum STATIC_LSP {
+						value "2";
+						description "STATIC_LSP:";
+					}
+					enum TE_LSP {
+						value "3";
+						description "TE_LSP:";
+					}
+					enum TE_TUNNEL {
+						value "4";
+						description "TE_TUNNEL:";
+					}
+					enum LDP_TUNNEL {
+						value "5";
+						description "LDP_TUNNEL:";
+					}
+					enum VLL_PW {
+						value "6";
+						description "VLL_PW:";
+					}
+					enum VSI_PW {
+						value "7";
+						description "VSI_PW:";
+					}
+					enum OTHER {
+						value "8";
+						description "OTHER:";
+					}
+				}
+			}
+			leaf destAddr {
+				description "Destination Address";
+				config "false";
+				type inet:ip-address;
+			}
+			leaf srcAddr {
+				description "Source IP Address";
+				config "false";
+				type inet:ip-address;
+			}
+			leaf nextHop {
+				description "IP or LDP LSP Next Hop Address";
+				config "false";
+				type inet:ip-address;
+			}
+			leaf outIfName {
+				description "Out Interface Name";
+				config "false";
+				type ifName;
+			}
+			leaf vrfName {
+				description "VRF Name";
+				config "false";
+				type vrfName;
+			}
+			leaf tunnelName {
+				description "Binding MPLS Tunnel Name";
+				config "false";
+				type ifName;
+			}
+			leaf teBackup {
+				description "TE-LSP Link Flag, 0 for Primary Link 1 for Backup Link";
+				config "false";
+				type string;
+			}
+			leaf minTxInt {
+				description "Minimum Interval of BFD Control Packet Transmitting";
+				config "false";
+				type uint32;
+			}
+			leaf minRxInt {
+				description "Minimum Interval of BFD Control Packet Receiving";
+				config "false";
+				type uint32;
+			}
+			leaf detectMulti {
+				description "Detect Multiplier";
+				config "false";
+				type uint32;
+			}
+			leaf demandEnable {
+				description "Demand Mode Enable";
+				config "false";
+				type boolean;
+			}
+
+			leaf tosExp {
+				description "Exp of Packet";
+				config "false";
+				type uint32;
+			}
+			leaf shutdown {
+				description "Admin Down";
+				config "false";
+				type boolean;
+				
+			}
+			leaf description {
+				description "Information of session";
+				config "false";
+				type string;
+			}
+			leaf bindApps {
+				description "Binding Application information";
+				config "false";
+				type string;
+			}
+
+			leaf encapType {
+				description "Encapsulation Type";
+				config "false";
+				type string;
+			}
+			leaf localVcLabel {
+				description "Local VC Label";
+				config "false";
+				type string;
+			}
+			leaf remoteVcLabel {
+				description "Remote VC Label";
+				config "false";
+				type string;
+			}
+			leaf vsiName {
+				description "VSI Name";
+				config "false";
+				type string;
+			}
+			leaf vsiPeerAddr {
+				description "VSI Pw Peer IP Address";
+				config "false";
+				type inet:ip-address;
+			}
+			leaf vcId {
+				description "Vc Id";
+				config "false";
+				type string;
+			}
+			leaf remotePeer {
+				description "Remote Peer";
+				config "false";
+				type string;
+			}
+			leaf pwSecondary {
+				description "Secondary PW";
+				config "false";
+				type string;
+			}
+			list bfdSessRunning {
+				description "BFD Session Running Information";
+ 
+ 				leaf sessState {
+					description "Session State";
+					config "false";
+					type enumeration {
+						enum ADMINDOWN {
+							value "0";
+							description "ADMINDOWN:";
+						}
+						enum DOWN {
+							value "1";
+							description "DOWN:";
+						}
+						enum INIT {
+							value "2";
+							description "INIT:";
+						}
+						enum UP {
+							value "3";
+							description "UP:";
+						}
+					}
+				}
+				leaf udpDstPort {
+					description "UDP Destination Port";
+					config "false";
+					type uint32;
+				}
+				leaf detectMode {
+					description "Detect Mode";
+					config "false";
+					type enumeration {
+						enum ASYNC_WITH_ECHO {
+							value "0";
+							description "ASYNC_WITH_ECHO:";
+						}
+						enum ASYNC_WITHOUT_ECHO {
+							value "1";
+							description "ASYNC_WITHOUT_ECHO:";
+						}
+						enum DEMAND_WITH_ECHO {
+							value "2";
+							description "DEMAND_WITH_ECHO:";
+						}
+						enum DEMAND_WITHOUT_ECHO {
+							value "3";
+							description "DEMAND_WITHOUT_ECHO:";
+						}
+					}
+				}
+				leaf reDemandMode {
+					description "Remote Demand Mode Enable";
+					config "false";
+					type boolean;
+				}
+				leaf actTxInt {
+					description "Actual transmit interval";
+					config "false";
+					type string;
+				}
+				leaf actRxInt {
+					description "Actual receive interval";
+					config "false";
+					type string;
+				}
+				leaf actMulti {
+					description "Actual detect multiplier";
+					config "false";
+					type string;
+				}
+				leaf detectTime {
+					description "Detect Time";
+					config "false";
+					type string;
+				}
+				leaf ttl {
+					description "TTL of session";
+					config "false";
+					type uint32 {
+						range "1..255";
+					}
+				}
+				leaf localDiag {
+					description "Reason of last down";
+					config "false";
+					type enumeration {
+						enum NONE {
+							value "0";
+							description "NONE:";
+						}
+						enum DETECT_DOWN {
+							value "1";
+							description "DETECT_DOWN:";
+						}
+						enum ECHO_DOWN {
+							value "2";
+							description "ECHO_DOWN:";
+						}
+						enum NEIGHBOR_DOWN {
+							value "3";
+							description "NEIGHBOR_DOWN:";
+						}
+						enum FORWARDING_RESET {
+							value "4";
+							description "FORWARDING_RESET:";
+						}
+						enum PATH_DOWN {
+							value "5";
+							description "PATH_DOWN:";
+						}
+						enum CONCAT_PATH_DOWN {
+							value "6";
+							description "CONCAT_PATH_DOWN:";
+						}
+						enum ADMIN_DOWN {
+							value "7";
+							description "ADMIN_DOWN:";
+						}
+						enum REVERSE_CONCAT_PATH_DOWN {
+							value "8";
+							description "REVERSE_CONCAT_PATH_DOWN:";
+						}
+					}
+				}
+			}
+
+			list bfdSessStat {
+				
+ 				description "BFD Session Statistics)";
+ 
+ 				leaf lastDownTime {
+					description "Timestamp of last down";
+					config "false";
+					type uint64;
+				}
+				leaf timeFromDown {
+					description "Duration of last down";
+					config "false";
+					type string;
+				}
+				leaf createTime {
+					description "Timestamp of session created";
+					config "false";
+					type uint64;
+				}
+				leaf timeFromCreate {
+					description "Duration of session created";
+					config "false";
+					type string;
+				}
+				leaf lastUpTime {
+					description "Timestamp of last UP";
+					config "false";
+					type uint64;
+				}
+				leaf timeFromUp {
+					description "Duration of last UP";
+					config "false";
+					type string;
+				}
+				leaf recvPkt {
+					description "Recieved Packet Count";
+					config "false";
+					type uint64;
+				}
+				leaf sendPkt {
+					description "Sent Packet Count";
+					config "false";
+					type uint64;
+				}
+				leaf downCount {
+					description "Session Down Count";
+					config "false";
+					type uint32;
+				}
+				leaf recvBadPkt {
+					description "Received Bad Pcket Count";
+					config "false";
+					type uint64;
+				}
+				leaf sendBadPkt {
+					description "Sent Bad Packet Count";
+					config "false";
+					type uint64;
+				}
+				leaf shortBreakCount {
+					description "Shortbreak Count";
+					config "false";
+					default "0";
+					type uint32;
+				}
+				leaf lspPingCount {
+					description "LSP Packet Sent Count";
+					config "false";
+					type uint32;
+				}
+			}
+
+		}
+
+	}
+
+}
