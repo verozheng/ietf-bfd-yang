@@ -1,121 +1,29 @@
-Vero, thanks for sharing your YANG model with us. I used it to
-generate the tree model and use that to comment on the info model, so
-we do not get into the semantics of the language or the YANG model
-itself.
-
 I should define what I have in mind when I talk about the base model.
 
 The base model in my mind is the model that captures information that
-is common across most if not all of BFD sessions. Similarly I have
-called out two other augmented models - IP-BFD and LSP-BFD in these
-notes, but that is not say that there cannot be more. Those two models
-in turn capture what I believe are constructs that belong in that
-model.  We might through our discussion decide that some of those
-construts may belong somewhere else.
+is common across most if not all of BFD sessions. 
 
-Questions I have going through the model are:
+So rather than look at the model that Vero presented (BTW, thanks Vero
+for sharing the model), I thought it would be easier to present what I
+had in mind for the base model. Here it is in tree format.
 
-- How different is TE model from BGP or other IP models?
+module: ietf-bfd
+   +--rw bfd-config
+      +--rw name?                   string
+      +--rw admin-state?            enumeration
+      +--rw role?                   enumeration
+      +--rw version?                uint8
+      +--rw diag?                   uint8
+      +--rw state?                  uint8
+      +--rw bfd-bits?               bits
+      +--rw detect-multiplier?      uint32
+      +--rw length?                 uint32
+      +--rw my-discriminator?       uint32
+      +--rw your-discriminator?     uint32
+      +--rw min-tx-interval?        uint32
+      +--rw min-rx-interval?        uint32
+      +--rw min-rx-echo-interval?   uint32
+      +--rw auth-type?              uint8
+      +--rw auth-length?            uint8
 
-module: bfd
-   +--rw bfdSchGlobal
-   |  +--rw bfdEnable    boolean  -- base info config model.
-   +--rw bfdForMpls
-   |  +--rw mplsTeTunnelBfd
-   |     +--rw mplsTeTunnelBfdEnable?             boolean  -- if same as bfdEnable, it is in base config model.
-   |     +--rw mplsTeTunnelBfdMinTx?              uint32   -- minTx should be part of base config model.
-   |     +--rw mplsTeTunnelBfdMinnRx?             uint32   -- same as minTx.
-   |     +--rw mplsTeTunnelBfdDetectMultiplier?   uint32   -- Should be part of base config model.
-   |     +--rw mplsTeTunnelBfdBlock?              boolean
-   +--rw bfdForBgp
-   |  +--rw peerBfd
-   |     +--rw isBfdBlock?    boolean
-   |     +--rw multiplier?    uint32 -- should be part of base config model.
-   |     +--rw isBfdEnable?   boolean -- should be part of base config model.
-   |     +--rw rxInterval?    uint32  -- should be part of base config model.
-   |     +--rw txInterval?    uint32  -- should be part of base config model.
-   |     +--rw isSingleHop?   boolean -- should be part of augmented IP-BFD config model.
-   +--rw bfdForOspf
-   |  +--rw interfaceBfd
-   |     +--rw bfdblock?                   boolean
-   |     +--rw bfdEnable?                  boolean -- should be part of base config model.
-   |     +--rw bfdDetectMultiplierValue?   uint32 -- should be part of base config model.
-   |     +--rw bfdMinTxInterval?           uint32 -- should be part of base config model.
-   |     +--rw bfdMinRxInterval?           uint32 -- should be part of base config model.
-   +--rw bfdForIsis
-   |  +--rw isCircMtBfd
-   |     +--rw bfdblock?                   boolean
-   |     +--rw bfdEnable?                  boolean -- should be part of base config model.
-   |     +--rw bfdDetectMultiplierValue?   uint32 -- should be part of base config model.
-   |     +--rw bfdMinTxInterval?           uint32 -- should be part of base config model.
-   |     +--rw bfdMinRxInterval?           uint32 -- should be part of base config model.
-   +--ro bfdStat*
-   |  +--ro ipSessNum?         uint32 -- part of IP-BFD augmented operational model
-   |  +--ro ldpLspSessNum?     uint32 -- part of LSP-BFD augmented operational model
-   |  +--ro sLspSessNum?       uint32
-   |  +--ro teLspSessNum?      uint32
-   |  +--ro totalSessNum?      uint32 -- part of base operational model
-   |  +--ro SessUpNum?         uint32 -- part of base operational model
-   |  +--ro SessDownNum?       uint32 -- part of base operational model
-   |  +--ro staticSessNum?     uint32 -- part of base operational model
-   |  +--ro dynSessNum?        uint32 -- part of base operational model
-   |  +--ro teTunnelSessNum?   uint32
-   |  +--ro usedDiscrNum?      uint32 -- ??
-   |  +--ro pwSessNum?         uint32
-   |  +--ro vsiPwSessNum?      uint32
-   +--ro bfdAllSessions
-      +--ro bfdAllSession*
-         +--ro sessName?         string -- part of base operational model
-         +--ro createType?       enumeration -- part of base operational model
-         +--ro sessType?         enumeration -- part of base operational model
-         +--ro localDiscr?       uint32 -- part of base operational model
-         +--ro remoteDiscr?      uint32 -- part of base operational model
-         +--ro linkType?         enumeration -- could be part of the base operational model.
-         +--ro destAddr?         inet:ip-address -- part of IP-BFD operationa model
-         +--ro srcAddr?          inet:ip-address -- part of IP-BFD operationa model
-         +--ro nextHop?          inet:ip-address -- part of IP-BFD operationa model
-         +--ro outIfName?        ifName
-         +--ro vrfName?          vrfName
-         +--ro tunnelName?       ifName
-         +--ro teBackup?         string
-         +--ro minTxInt?         uint32
-         +--ro minRxInt?         uint32
-         +--ro detectMulti?      uint32
-         +--ro demandEnable?     boolean
-         +--ro tosExp?           uint32
-         +--ro shutdown?         boolean
-         +--ro description?      string
-         +--ro bindApps?         string
-         +--ro encapType?        string
-         +--ro localVcLabel?     string
-         +--ro remoteVcLabel?    string
-         +--ro vsiName?          string
-         +--ro vsiPeerAddr?      inet:ip-address
-         +--ro vcId?             string
-         +--ro remotePeer?       string
-         +--ro pwSecondary?      string
-         +--ro bfdSessRunning*
-         |  +--ro sessState?      enumeration
-         |  +--ro udpDstPort?     uint32
-         |  +--ro detectMode?     enumeration
-         |  +--ro reDemandMode?   boolean
-         |  +--ro actTxInt?       string
-         |  +--ro actRxInt?       string
-         |  +--ro actMulti?       string
-         |  +--ro detectTime?     string
-         |  +--ro ttl?            uint32
-         |  +--ro localDiag?      enumeration
-         +--ro bfdSessStat*
-            +--ro lastDownTime?      uint64
-            +--ro timeFromDown?      string
-            +--ro createTime?        uint64
-            +--ro timeFromCreate?    string
-            +--ro lastUpTime?        uint64
-            +--ro timeFromUp?        string
-            +--ro recvPkt?           uint64
-            +--ro sendPkt?           uint64
-            +--ro downCount?         uint32
-            +--ro recvBadPkt?        uint64
-            +--ro sendBadPkt?        uint64
-            +--ro shortBreakCount?   uint32
-            +--ro lspPingCount?      uint32
+If you want to see the corresponding YANG file, check out the src directory for ietf-bfd.yang
