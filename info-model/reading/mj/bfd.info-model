@@ -5,6 +5,7 @@ IP-BFD, LSP-BFD etc.
 module: ietf-bfd
    +--rw bfd-config
       +--rw name?                        string
+      +--rw type                         identityref
       +--rw admin-state?                 enumeration
       +--rw role?                        enumeration
       +--rw control-plane-independent?   boolean
@@ -18,4 +19,4 @@ module: ietf-bfd
       +--rw auth-type?                   uint8
       +--rw hw-accelerated?              boolean
 
-If you want to see the corresponding YANG file, check out the src directory for ietf-bfd.yang
+If you want to see the corresponding YANG file, check out the src directory for mj/ietf-bfd.yang

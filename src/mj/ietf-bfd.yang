@@ -34,6 +34,14 @@ module ietf-bfd {
  * typedefs
  */
 
+/*
+ * Identities
+ */
+identity bfd-type {
+    description
+        "Base identity from which specific BFD types are derived.";
+}
+
 /* 
  * configuration 
  */
@@ -45,6 +53,27 @@ module ietf-bfd {
             type string;
             description
                 "A string that is used to identify the BFD session.";
+        }
+
+        leaf type {
+            type identityref {
+                base bfd-type;
+            }
+            mandatory true;
+            description
+                "The type of BFD session.
+
+                 When a BFD entry is created, a server MAY initialize
+                 the type leaf with a valid value, e.g., if it is 
+                 possible to derive the type from the name of the BFD
+                 session.
+
+                 If a client tries to set the type of an BFD session to a
+                 value that can never be used by the system, e.g., if the
+                 type is not supported or if the type does not match the
+                 name of the BFD session, the server MUST reject the request.
+                 A NETCONF server MUST reply with an rpc-error with the
+                 error-tag 'invalid-value' in this case.";
         }
 
         leaf admin-state {
