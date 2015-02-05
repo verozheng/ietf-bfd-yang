@@ -1,0 +1,79 @@
+module: bfd-oper
+   +--ro bfdSessionStatistic
+   |  +--ro ipSessNum?      uint32
+   |  +--ro totalSessNum?   uint32
+   |  +--ro SessUpNum?      uint32
+   |  +--ro SessDownNum?    uint32
+   |  +--ro usedDiscrNum?   uint32
+   +--ro session-lists
+      +--ro session-sh-ip* [interface destination-address]
+      |  +--ro interface              if:interface-ref
+      |  +--ro destination-address    inet:ip-address
+      |  +--ro sesssion-type?         enumeration
+      |  +--ro local-dscriminator?    bfd-parms:discriminator
+      |  +--ro remote-dscriminator?   bfd-parms:discriminator
+      |  +--ro remote-multiplier?     bfd-parms:multiplier
+      |  +--ro outIfName?             ifName
+      |  +--ro demandCapability?      boolean
+      |  +--ro SessRunning*
+      |  |  +--ro local-state?               bfd-parms:state
+      |  |  +--ro remote-state?              bfd-parms:state
+      |  |  +--ro local-diagnostic?          bfd-parms:diagnostic
+      |  |  +--ro remote-diagnostic?         bfd-parms:diagnostic
+      |  |  +--ro detect-Mode?               enumeration
+      |  |  +--ro actual-tx-interval?        string
+      |  |  +--ro actual-rx-interval?        string
+      |  |  +--ro actual-echo-rx-interval?   string
+      |  |  +--ro Multiplier?                string
+      |  |  +--ro detectTime?                string
+      |  |  +--ro ttl?                       uint32
+      |  |  +--ro udpDstPort?                uint32
+      |  +--ro SessStat*
+      |     +--ro lastDownTime?      uint64
+      |     +--ro timeFromDown?      string
+      |     +--ro createTime?        uint64
+      |     +--ro timeFromCreate?    string
+      |     +--ro lastUpTime?        uint64
+      |     +--ro timeFromUp?        string
+      |     +--ro recvPkt?           uint64
+      |     +--ro sendPkt?           uint64
+      |     +--ro downCount?         uint32
+      |     +--ro recvBadPkt?        uint64
+      |     +--ro sendBadPkt?        uint64
+      |     +--ro shortBreakCount?   uint32
+      +--ro session-mh-ip* [vrf-name source-address destination-address]
+         +--ro vrf-name               string
+         +--ro source-address         inet:ip-address
+         +--ro destination-address    inet:ip-address
+         +--ro sesssion-type?         enumeration
+         +--ro local-dscriminator?    bfd-parms:discriminator
+         +--ro remote-dscriminator?   bfd-parms:discriminator
+         +--ro remote-multiplier?     bfd-parms:multiplier
+         +--ro outIfName?             ifName
+         +--ro demandCapability?      boolean
+         +--ro SessRunning*
+         |  +--ro local-state?               bfd-parms:state
+         |  +--ro remote-state?              bfd-parms:state
+         |  +--ro local-diagnostic?          bfd-parms:diagnostic
+         |  +--ro remote-diagnostic?         bfd-parms:diagnostic
+         |  +--ro detect-Mode?               enumeration
+         |  +--ro actual-tx-interval?        string
+         |  +--ro actual-rx-interval?        string
+         |  +--ro actual-echo-rx-interval?   string
+         |  +--ro Multiplier?                string
+         |  +--ro detectTime?                string
+         |  +--ro ttl?                       uint32
+         |  +--ro udpDstPort?                uint32
+         +--ro SessStat*
+            +--ro lastDownTime?      uint64
+            +--ro timeFromDown?      string
+            +--ro createTime?        uint64
+            +--ro timeFromCreate?    string
+            +--ro lastUpTime?        uint64
+            +--ro timeFromUp?        string
+            +--ro recvPkt?           uint64
+            +--ro sendPkt?           uint64
+            +--ro downCount?         uint32
+            +--ro recvBadPkt?        uint64
+            +--ro sendBadPkt?        uint64
+            +--ro shortBreakCount?   uint32
