@@ -1,0 +1,272 @@
+module bfd-oper {
+	namespace "urn:ietf:params:xml:ns:yang:bfd-oper";
+	prefix "bfd-oper";
+	
+	import bfd-parameters {
+		prefix "bfd-parms";
+	}
+	
+	import ietf-interfaces {
+		prefix "if";
+	}
+
+	import ietf-inet-types {
+		prefix "inet";
+	}
+
+	organization "IETF BFD Working Group";
+
+	contact 
+		"WG Web:   <http://tools.ietf.org/wg/bfd>
+		WG List:  TBD
+		WG Chair: Jeff Haas
+		WG Chair: Nobo Akiya
+		Editor:   Vero + Reshad";
+
+	description 
+		"This module contains the YANG definition for BFD parameters as per RFC5881";
+
+	revision 2015-01-17 {
+		description "Initial revision.";
+	}
+
+	typedef ifName {
+		description "Interface name";
+		type string;
+	}
+	typedef vrfName {
+		description "VRF Name";
+		type string;
+	}	
+
+	grouping bfdAllSession {
+		description "BFD Session Configuration Information";
+		leaf sesssion-type {
+			type enumeration {
+				enum SINGLE_HOP_IP {
+					value "0";
+					description "SINGLE_HOP_IP:";
+				}
+				enum MULTI_HOP_IP {
+					value "1";
+					description "MULTI_HOP_IP:";
+				}
+			}
+		}
+		leaf local-dscriminator {
+			type bfd-parms:discriminator;
+		}
+		leaf remote-dscriminator {
+			type bfd-parms:discriminator;
+		}
+		leaf remote-multiplier {
+			type bfd-parms:multiplier;
+		}
+		leaf outIfName {
+			description "Physical Out Interface Name";
+			config "false";
+			type ifName;
+		}		
+		leaf demandCapability{
+			description "Local Demand Mode Capability";
+			config "false";
+			type boolean;
+		}		
+
+		list SessRunning {
+			description "BFD Session Running Information";
+			leaf local-state {
+				type bfd-parms:state;
+			}
+			leaf remote-state {
+				type bfd-parms:state;
+			} 
+			leaf local-diagnostic {
+				type bfd-parms:diagnostic;
+			}
+			leaf remote-diagnostic {
+				type bfd-parms:diagnostic;
+			}
+			leaf detect-Mode {
+				description "Detect Mode";
+				config "false";
+				type enumeration {
+					enum ASYNC_WITH_ECHO {
+						value "0";
+						description "ASYNC_WITH_ECHO:";
+					}
+					enum ASYNC_WITHOUT_ECHO {
+						value "1";
+						description "ASYNC_WITHOUT_ECHO:";
+					}
+					enum DEMAND_WITH_ECHO {
+						value "2";
+						description "DEMAND_WITH_ECHO:";
+					}
+					enum DEMAND_WITHOUT_ECHO {
+						value "3";
+						description "DEMAND_WITHOUT_ECHO:";
+					}
+				}
+			}
+			leaf actual-tx-interval {
+				description "Actual transmit interval";
+				config "false";
+				type string;
+			}
+			leaf actual-rx-interval {
+				description "Actual receive interval";
+				config "false";
+				type string;
+			}
+			leaf actual-echo-tx-interval {
+				description "Actual echo transmit interval";
+				config "false";
+				type string;
+			}
+			leaf detectTime {
+				description "Detect Time";
+				config "false";
+				type string;
+			}
+			leaf ttl {
+				description "TTL of session";
+				config "false";
+				type uint32 {
+					range "1..255";
+				}
+			}
+			leaf udpDstPort {
+				description "UDP Destination Port";
+				config "false";
+				type uint32;
+			}
+		}
+
+		list SessStat {
+			description "BFD Session Statistics";
+			leaf lastDownTime {
+				description "Timestamp of last down";
+				config "false";
+				type uint64;
+			}
+			leaf timeFromDown {
+				description "Duration of last down";
+				config "false";
+				type string;
+			}
+			leaf createTime {
+				description "Timestamp of session created";
+				config "false";
+				type uint64;
+			}
+			leaf timeFromCreate {
+				description "Duration of session created";
+				config "false";
+				type string;
+			}
+			leaf lastUpTime {
+				description "Timestamp of last UP";
+				config "false";
+				type uint64;
+			}
+			leaf timeFromUp {
+				description "Duration of last UP";
+				config "false";
+				type string;
+			}
+			leaf recvPkt {
+				description "Recieved Packet Count";
+				config "false";
+				type uint64;
+			}
+			leaf sendPkt {
+				description "Sent Packet Count";
+				config "false";
+				type uint64;
+			}
+			leaf downCount {
+				description "Session Down Count";
+				config "false";
+				type uint32;
+			}
+			leaf recvBadPkt {
+				description "Received Bad Pcket Count";
+				config "false";
+				type uint64;
+			}
+			leaf sendFailedPkt {
+				description "Packet Failed to Send Count";
+				config "false";
+				type uint64;
+			}
+			leaf shortBreakCount {
+				description "Shortbreak Count";
+				config "false";
+				default "0";
+				type uint32;
+			}
+		}
+	}
+
+	container bfdSessionStatistic {
+		config "false";
+		description "BFD Session Number";
+
+		leaf ipSHSessNum {
+			description "IP Single Hop Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf ipMHSessNum {
+			description "IP Multi Hop Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf totalSessNum {
+			description "Total Session Number";
+			config "false";
+			type uint32;
+		}
+		leaf SessUpNum {
+			description "Session Up Number";
+			config "false";
+			type uint32;
+		}
+		leaf SessDownNum {
+			description "Session Down Number";
+			config "false";
+			type uint32;
+		}
+	}
+
+	container bfdSessionLists {
+		config false;
+		list sessionIpSH {
+			key "interface destAddress";
+			leaf interface {
+				type if:interface-ref;
+			}
+			leaf destAddress {
+				type inet:ip-address;
+			}
+
+			uses bfdAllSession;
+		}
+
+		list sessionIpMH {
+			key "vrfName sourceAddress destAddress";
+			leaf vrfName {
+				type string;
+			}
+			leaf sourceAddress {
+				type inet:ip-address;
+			}
+			leaf destAddress {
+				type inet:ip-address;
+			}
+
+			uses bfdAllSession;
+		}
+	}
+}
